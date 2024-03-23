@@ -14,7 +14,9 @@ namespace Attar.C41.G02.PL.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var departments = _departmentRepo.GetAll();
+
+            return View(departments);
         }
     }
 }
