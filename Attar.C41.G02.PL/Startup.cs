@@ -1,3 +1,5 @@
+using Attar.C41.G02.BLL.Interfaces;
+using Attar.C41.G02.BLL.Repositories;
 using Attar.C41.G02.DAL.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +36,8 @@ namespace Attar.C41.G02.PL
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

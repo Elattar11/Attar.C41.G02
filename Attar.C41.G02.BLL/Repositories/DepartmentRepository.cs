@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Attar.C41.G02.BLL.Repositories
 {
-    internal class DepartmentRepository : IDepartmentRepository
+    public class DepartmentRepository : IDepartmentRepository
     {
         private readonly ApplicationDbContext _context; //NULL
 

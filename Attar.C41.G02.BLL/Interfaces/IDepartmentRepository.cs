@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Attar.C41.G02.BLL.Interfaces
 {
-    internal interface IDepartmentRepository
+    public interface IDepartmentRepository
     {
         IEnumerable<Department> GetAll();
         Department Get(int id);
