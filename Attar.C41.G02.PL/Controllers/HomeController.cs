@@ -1,4 +1,4 @@
-﻿using Attar.C41.G02.PL.Models;
+﻿using Attar.C41.G02.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

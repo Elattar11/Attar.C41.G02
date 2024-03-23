@@ -1,6 +1,6 @@
 using System;
 
-namespace Attar.C41.G02.PL.Models
+namespace Attar.C41.G02.PL.ViewModels
 {
     public class ErrorViewModel
     {
