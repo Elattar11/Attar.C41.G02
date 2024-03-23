@@ -1,6 +1,8 @@
+using Attar.C41.G02.DAL.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +25,15 @@ namespace Attar.C41.G02.PL
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(); //Register Built-In Services Required in MVC
+
+            //services.AddScoped<ApplicationDbContext>();
+            //services.AddScoped<DbContextOptions<ApplicationDbContext>>();
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer("Server = .; Database = MVCApplicationG02; Trusted_Connection = True;");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
