@@ -1,6 +1,7 @@
 ﻿using Attar.C41.G02.BLL.Interfaces;
 using Attar.C41.G02.BLL.Repositories;
 using Attar.C41.G02.DAL.Models;
+using Attar.C41.G02.PL.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -89,6 +90,7 @@ namespace Attar.C41.G02.PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit([FromRoute]int id, Department department)
         {
             if (id != department.Id)
@@ -122,6 +124,40 @@ namespace Attar.C41.G02.PL.Controllers
             }
             
 
+        }
+
+
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            return Details(id, "Delete");
+        }
+
+
+        [HttpPost]
+        public IActionResult Delete(Department department)
+        {
+            try
+            {
+                _departmentRepo.Delete(department);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (System.Exception ex)
+            {
+
+                if (_env.IsDevelopment())
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Un Error Has Occured");
+
+                }
+
+                return View(department);
+            }
         }
     }
 }
