@@ -10,51 +10,11 @@ using System.Threading.Tasks;
 
 namespace Attar.C41.G02.BLL.Repositories
 {
-    public class DepartmentRepository : IDepartmentRepository
+    public class DepartmentRepository : GenericRepository<Department>, IDepartmentRepository
     {
-        private readonly ApplicationDbContext _context; //NULL
-
-        public DepartmentRepository(ApplicationDbContext context)
+        public DepartmentRepository(ApplicationDbContext dbContext):base(dbContext)
         {
-            _context = context;
+            
         }
-
-        public int Add(Department entity)
-        {
-            _context.Departments.Add(entity);
-            return _context.SaveChanges();
-
-        }
-        public int Update(Department entity)
-        {
-            _context.Departments.Update(entity);
-            return _context.SaveChanges();
-        }
-        public int Delete(Department entity)
-        {
-            _context.Departments.Remove(entity);
-            return _context.SaveChanges();
-        }
-
-        public IEnumerable<Department> GetAll()
-        {
-            return _context.Departments.AsNoTracking().ToList();
-        }
-        public Department Get(int id)
-        {
-            //return _context.Departments.Find(id);
-
-            return _context.Find<Department>(id);
-
-            /// var department = _context.Departments.Local.Where(D => D.Id == id).FirstOrDefault();
-            /// if (department is null)
-            /// {
-            ///     department = _context.Departments.Where(D => D.Id == id).FirstOrDefault();
-            /// }
-            /// return department;
-        }
-
-        
-
     }
 }

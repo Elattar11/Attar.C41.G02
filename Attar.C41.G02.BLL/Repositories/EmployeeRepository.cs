@@ -10,48 +10,17 @@ using System.Threading.Tasks;
 
 namespace Attar.C41.G02.BLL.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
     {
-        private readonly ApplicationDbContext _context; //NULL
+        //private readonly ApplicationDbContext _context;
 
-        public EmployeeRepository(ApplicationDbContext context)
+        public EmployeeRepository(ApplicationDbContext context) :base(context)
         {
-            _context = context;
+            //_context = context;
         }
-
-        public int Add(Employee entity)
+        public IQueryable<Employee> GetEmployeesByAddress(string address)
         {
-            _context.Employees.Add(entity);
-            return _context.SaveChanges();
-
-        }
-        public int Update(Employee entity)
-        {
-            _context.Employees.Update(entity);
-            return _context.SaveChanges();
-        }
-        public int Delete(Employee entity)
-        {
-            _context.Employees.Remove(entity);
-            return _context.SaveChanges();
-        }
-
-        public IEnumerable<Employee> GetAll()
-        {
-            return _context.Employees.AsNoTracking().ToList();
-        }
-        public Employee Get(int id)
-        {
-            //return _context.Employees.Find(id);
-
-            return _context.Find<Employee>(id);
-
-            /// var department = _context.Employees.Local.Where(D => D.Id == id).FirstOrDefault();
-            /// if (department is null)
-            /// {
-            ///     department = _context.Employees.Where(D => D.Id == id).FirstOrDefault();
-            /// }
-            /// return department;
+            return _context.Employees.Where(E => E.Address.ToLower() == address.ToLower()); 
         }
     }
 }
