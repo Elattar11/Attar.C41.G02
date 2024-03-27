@@ -4,8 +4,26 @@
 
 @{
     ViewData["Title"] = "Index";
+
+    // string vDataMessage = ViewData["Message"] as string;
+
+    // string vBagMsg = ViewBag.Message; 
 }
 
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Message"]
+    </div>
+}
+
+@* <div class="alert alert-danger">
+    @ViewData["Message"]
+</div> *@
+
+<div class="alert alert-danger">
+    @ViewBag.Message
+</div>
 <h1>All Employees</h1> 
 
 <br />

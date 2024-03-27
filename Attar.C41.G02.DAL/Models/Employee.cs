@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -57,6 +58,10 @@ namespace Attar.C41.G02.DAL.Models
         public Gender Gender { get; set; }
         public EmpType EmployeeType { get; set; }
         public bool IsDeleted { get; set; }
+
+        [ForeignKey("Department")]
+        public int? DepartmentId  { get; set; }
+        public Department Department { get; set; }
 
 
 

@@ -18,6 +18,10 @@ namespace Attar.C41.G02.PL.Controllers
         }
         public IActionResult Index()
         {
+            //ViewData["Message"] = "Hello ViewData";
+
+            //ViewBag.Message = "Hello ViewBag"; 
+
             var employees = _employeeRepo.GetAll();
 
             return View(employees);
@@ -36,10 +40,17 @@ namespace Attar.C41.G02.PL.Controllers
             if (ModelState.IsValid) //Server Side Validation
             {
                 var count = _employeeRepo.Add(employee);
+
+
                 if (count > 0)
                 {
-                    return RedirectToAction(nameof(Index));
+                    TempData["Message"] = "Department is created successfully"; 
                 }
+                else
+                {
+                    TempData["Message"] = "Error !!!";
+                }
+                return RedirectToAction(nameof(Index));
             }
 
             return View(employee);

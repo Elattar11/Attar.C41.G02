@@ -26,6 +26,11 @@ namespace Attar.C41.G02.DAL.Data.Configurations
                 .HasColumnType("varchar")
                 .HasMaxLength(50)
                 .IsRequired();
+
+            builder.HasMany(D => D.Employees)
+                .WithOne(E => E.Department)
+                .HasForeignKey(E => E.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
