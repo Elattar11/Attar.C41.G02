@@ -10,11 +10,13 @@ namespace Attar.C41.G02.PL.Controllers
     {
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IWebHostEnvironment _env;
+        //private readonly IDepartmentRepository _departmentRepository;
 
-        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env)
+        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env /*, IDepartmentRepository departmentRepository*/)
         {
             _employeeRepo = employeeRepo;
             _env = env;
+            //_departmentRepository = departmentRepository;
         }
         public IActionResult Index()
         {
@@ -30,6 +32,7 @@ namespace Attar.C41.G02.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            //ViewData["Departments"] = _departmentRepository.GetAll();
             return View();
 
         }
@@ -81,6 +84,7 @@ namespace Attar.C41.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
+            //ViewData["Departments"] = _departmentRepository.GetAll();
             return Details(id, "Edit");
 
             ///if (!id.HasValue)

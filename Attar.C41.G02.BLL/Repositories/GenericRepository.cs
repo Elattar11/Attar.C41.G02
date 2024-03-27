@@ -42,7 +42,14 @@ namespace Attar.C41.G02.BLL.Repositories
 
         public IEnumerable<T> GetAll()
         {
-            return _context.Set<T>().AsNoTracking().ToList();
+            if (typeof(T) == typeof(Employee))
+            {
+                return (IEnumerable<T>)_context.Employees.Include(E => E.Department).AsNoTracking().ToList();
+            }
+            else
+            {
+                return _context.Set<T>().Include(E => E).AsNoTracking().ToList();
+            }
         }
         public T Get(int id)
         {
