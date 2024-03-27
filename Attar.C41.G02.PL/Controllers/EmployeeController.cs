@@ -1,8 +1,12 @@
 ﻿using Attar.C41.G02.BLL.Interfaces;
 using Attar.C41.G02.DAL.Models;
+using Attar.C41.G02.PL.ViewModels;
+using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Attar.C41.G02.PL.Controllers
@@ -11,12 +15,17 @@ namespace Attar.C41.G02.PL.Controllers
     {
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IWebHostEnvironment _env;
+        private readonly IMapper _mapper;
+
         //private readonly IDepartmentRepository _departmentRepository;
 
-        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env /*, IDepartmentRepository departmentRepository*/)
+        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env 
+            , IMapper mapper
+            /*, IDepartmentRepository departmentRepository*/)
         {
             _employeeRepo = employeeRepo;
             _env = env;
+            _mapper = mapper;
             //_departmentRepository = departmentRepository;
         }
         public IActionResult Index(string searchInp)
@@ -28,11 +37,13 @@ namespace Attar.C41.G02.PL.Controllers
 
             var employees = Enumerable.Empty<Employee>();
 
+            var mappedEmp = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
+
             if (string.IsNullOrEmpty(searchInp))
                 employees = _employeeRepo.GetAll();
             else
                 employees = _employeeRepo.searchByName(searchInp.ToLower());
-            return View(employees);
+            return View(mappedEmp); 
 
         }
 
@@ -45,11 +56,13 @@ namespace Attar.C41.G02.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Employee employee)
+        public IActionResult Create(EmployeeViewModel employeeVM)
         {
             if (ModelState.IsValid) //Server Side Validation
             {
-                var count = _employeeRepo.Add(employee);
+                var mappedEmp = _mapper.Map<EmployeeViewModel , Employee>(employeeVM);
+
+                var count = _employeeRepo.Add(mappedEmp);
 
 
                 if (count > 0)
@@ -63,7 +76,7 @@ namespace Attar.C41.G02.PL.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(employee);
+            return View(employeeVM);
 
         }
 
@@ -78,12 +91,14 @@ namespace Attar.C41.G02.PL.Controllers
 
             var employee = _employeeRepo.Get(id.Value);
 
+            var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
+
             if (employee is null)
             {
                 return NotFound(); //404 
             }
 
-            return View(viewName, employee);
+            return View(viewName, mappedEmp);
 
 
         }
@@ -111,18 +126,19 @@ namespace Attar.C41.G02.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, Employee employee)
+        public IActionResult Edit([FromRoute] int id, EmployeeViewModel employeeVM)
         {
-            if (id != employee.Id)
+            if (id != employeeVM.Id)
             {
                 return BadRequest();
             }
             if (!ModelState.IsValid)
-                return View(employee);
+                return View(employeeVM);
 
             try
             {
-                _employeeRepo.Update(employee);
+                var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
+                _employeeRepo.Update(mappedEmp);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -139,7 +155,7 @@ namespace Attar.C41.G02.PL.Controllers
 
                 }
 
-                return View(employee);
+                return View(employeeVM);
 
             }
 
@@ -156,11 +172,12 @@ namespace Attar.C41.G02.PL.Controllers
 
 
         [HttpPost]
-        public IActionResult Delete(Employee employee)
+        public IActionResult Delete(EmployeeViewModel employeeVM)
         {
             try
             {
-                _employeeRepo.Delete(employee);
+                var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
+                _employeeRepo.Delete(mappedEmp);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -176,7 +193,7 @@ namespace Attar.C41.G02.PL.Controllers
 
                 }
 
-                return View(employee);
+                return View(employeeVM);
             }
         }
     }

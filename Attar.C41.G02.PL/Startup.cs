@@ -2,6 +2,7 @@ using Attar.C41.G02.BLL.Interfaces;
 using Attar.C41.G02.BLL.Repositories;
 using Attar.C41.G02.DAL.Data;
 using Attar.C41.G02.PL.Extentions;
+using Attar.C41.G02.PL.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,6 +40,8 @@ namespace Attar.C41.G02.PL
             } , ServiceLifetime.Scoped);
 
             services.AddApplicationServices();
+
+            services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

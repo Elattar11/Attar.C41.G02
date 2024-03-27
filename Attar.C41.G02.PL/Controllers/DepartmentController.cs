@@ -2,6 +2,7 @@
 using Attar.C41.G02.BLL.Repositories;
 using Attar.C41.G02.DAL.Models;
 using Attar.C41.G02.PL.ViewModels;
+using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -12,11 +13,13 @@ namespace Attar.C41.G02.PL.Controllers
     {
         private readonly IDepartmentRepository _departmentRepo;
         private readonly IWebHostEnvironment _env;
+        private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentRepository departmentRepo , IWebHostEnvironment env)
+        public DepartmentController(IDepartmentRepository departmentRepo , IWebHostEnvironment env, IMapper mapper)
         {
             _departmentRepo = departmentRepo;
             _env = env;
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
@@ -33,18 +36,21 @@ namespace Attar.C41.G02.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Department department)
+        public IActionResult Create(DepartmentViewModel departmentVM)
         {
+
             if (ModelState.IsValid) //Server Side Validation
             {
-                var count = _departmentRepo.Add(department);
+                var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
+
+                var count = _departmentRepo.Add(mappedDep);
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }
             }
 
-            return View(department);
+            return View(departmentVM);
 
         }
 
@@ -59,12 +65,14 @@ namespace Attar.C41.G02.PL.Controllers
 
             var department = _departmentRepo.Get(id.Value);
 
+            var mappedDep = _mapper.Map<Department, DepartmentViewModel>(department);
+
             if (department is null)
             {
                 return NotFound(); //404 
             }
 
-            return View( viewName ,department);
+            return View( viewName , mappedDep);
 
 
         }
@@ -91,18 +99,19 @@ namespace Attar.C41.G02.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute]int id, Department department)
+        public IActionResult Edit([FromRoute]int id, DepartmentViewModel departmentVM)
         {
-            if (id != department.Id)
+            if (id != departmentVM.Id)
             {
                 return BadRequest();
             }
             if (!ModelState.IsValid)
-                return View(department);
+                return View(departmentVM);
 
             try
             {
-                _departmentRepo.Update(department);
+                var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
+                _departmentRepo.Update(mappedDep);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -119,7 +128,7 @@ namespace Attar.C41.G02.PL.Controllers
 
                 }
 
-                return View(department);
+                return View(departmentVM);
                 
             }
             
@@ -136,11 +145,12 @@ namespace Attar.C41.G02.PL.Controllers
 
 
         [HttpPost]
-        public IActionResult Delete(Department department)
+        public IActionResult Delete(DepartmentViewModel departmentVM)
         {
             try
             {
-                _departmentRepo.Delete(department);
+                var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
+                _departmentRepo.Delete(mappedDep);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -156,7 +166,7 @@ namespace Attar.C41.G02.PL.Controllers
 
                 }
 
-                return View(department);
+                return View(departmentVM);
             }
         }
     }
