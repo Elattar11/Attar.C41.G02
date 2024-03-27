@@ -3,6 +3,7 @@ using Attar.C41.G02.DAL.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 namespace Attar.C41.G02.PL.Controllers
 {
@@ -18,15 +19,21 @@ namespace Attar.C41.G02.PL.Controllers
             _env = env;
             //_departmentRepository = departmentRepository;
         }
-        public IActionResult Index()
+        public IActionResult Index(string searchInp)
         {
             //ViewData["Message"] = "Hello ViewData";
 
             //ViewBag.Message = "Hello ViewBag"; 
 
-            var employees = _employeeRepo.GetAll();
 
+            var employees = Enumerable.Empty<Employee>();
+
+            if (string.IsNullOrEmpty(searchInp))
+                employees = _employeeRepo.GetAll();
+            else
+                employees = _employeeRepo.searchByName(searchInp.ToLower());
             return View(employees);
+
         }
 
         [HttpGet]

@@ -10,20 +10,21 @@
     // string vBagMsg = ViewBag.Message; 
 }
 
-@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+@* @if (!string.IsNullOrEmpty(TempData["Message"] as string))
 {
     <div class="alert alert-danger">
         @TempData["Message"]
     </div>
-}
+} *@
 
 @* <div class="alert alert-danger">
     @ViewData["Message"]
 </div> *@
-
+@* 
 <div class="alert alert-danger">
     @ViewBag.Message
-</div>
+</div> *@
+
 <h1>All Employees</h1> 
 
 <br />
@@ -32,6 +33,17 @@
 <a asp-controller="Employee" asp-action="Create" class="btn btn-primary">Create New Employee</a>
 
 <br />
+
+<div class="row justify-content-center align-items-center mt-5">
+    <form asp-action="Index" class="row col-8 offset-2">
+        <div class="col-8">
+            <input type="text" class="form-control" name="searchInp" placeholder="Search By Name"/>
+        </div>
+        <div class="col-4">
+            <input type="submit" value="Search" class="btn btn-success"/>
+        </div>
+    </form>
+</div>
 
 @if(Model.Count() > 0)
 {

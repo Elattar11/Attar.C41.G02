@@ -22,5 +22,8 @@ namespace Attar.C41.G02.BLL.Repositories
         {
             return _context.Employees.Where(E => E.Address.ToLower() == address.ToLower()); 
         }
+
+        public IQueryable<Employee> searchByName(string name)
+            => _context.Employees.Where(E => E.Name.ToLower().Contains(name));
     }
 }
