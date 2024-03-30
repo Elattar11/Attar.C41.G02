@@ -28,7 +28,7 @@ namespace Attar.C41.G02.PL.Controllers
         }
         public IActionResult Index()
         {
-            var departments = _unitOfWork.departmentRepository.GetAll();
+            var departments = _unitOfWork.Repository<Department>().GetAll();
 
             return View(departments);
         }
@@ -48,7 +48,7 @@ namespace Attar.C41.G02.PL.Controllers
             {
                 var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
 
-                _unitOfWork.departmentRepository.Add(mappedDep);
+                _unitOfWork.Repository<Department>().Add(mappedDep);
 
                 var count = _unitOfWork.Complete();
 
@@ -71,7 +71,7 @@ namespace Attar.C41.G02.PL.Controllers
                 return BadRequest(); //400
             }
 
-            var department = _unitOfWork.departmentRepository.Get(id.Value);
+            var department = _unitOfWork.Repository<Department>().Get(id.Value);
 
             var mappedDep = _mapper.Map<Department, DepartmentViewModel>(department);
 
@@ -119,7 +119,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-                _unitOfWork.departmentRepository.Update(mappedDep);
+                _unitOfWork.Repository<Department>().Update(mappedDep);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -158,7 +158,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-                _unitOfWork.departmentRepository.Delete(mappedDep);
+                _unitOfWork.Repository<Department>().Delete(mappedDep);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Attar.C41.G02.BLL.Interfaces;
+using Attar.C41.G02.BLL.Repositories;
 using Attar.C41.G02.DAL.Models;
 using Attar.C41.G02.PL.ViewModels;
 using AutoMapper;
@@ -40,13 +41,13 @@ namespace Attar.C41.G02.PL.Controllers
 
 
             var employees = Enumerable.Empty<Employee>();
-
+            var empRepo = _unitOfWork.Repository<Employee>() as EmployeeRepository;
             var mappedEmp = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
 
             if (string.IsNullOrEmpty(searchInp))
-                employees = _unitOfWork.employeeRepository.GetAll();
+                employees = empRepo.GetAll();
             else
-                employees = _unitOfWork.employeeRepository.searchByName(searchInp.ToLower());
+                employees = empRepo.searchByName(searchInp.ToLower());
             return View(mappedEmp); 
 
         }
@@ -66,7 +67,7 @@ namespace Attar.C41.G02.PL.Controllers
             {
                 var mappedEmp = _mapper.Map<EmployeeViewModel , Employee>(employeeVM);
 
-                _unitOfWork.employeeRepository.Add(mappedEmp);
+                _unitOfWork.Repository<Employee>().Add(mappedEmp);
 
                 var count =  _unitOfWork.Complete();
                 if (count > 0)
@@ -93,7 +94,7 @@ namespace Attar.C41.G02.PL.Controllers
                 return BadRequest(); //400
             }
 
-            var employee = _unitOfWork.employeeRepository.Get(id.Value);
+            var employee = _unitOfWork.Repository<Employee>().Get(id.Value);
 
             var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
 
@@ -142,7 +143,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _unitOfWork.employeeRepository.Update(mappedEmp);
+                _unitOfWork.Repository<Employee>().Update(mappedEmp);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -181,7 +182,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _unitOfWork.employeeRepository.Delete(mappedEmp);
+                _unitOfWork.Repository<Employee>().Delete(mappedEmp);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
