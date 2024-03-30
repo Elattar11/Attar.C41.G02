@@ -20,24 +20,21 @@ namespace Attar.C41.G02.BLL.Repositories
             _context = context;
         }
 
-        public int Add(T entity)
+        public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
             //_context.Add(entity); //EF Core 3.1 New Feature
-            return _context.SaveChanges();
 
         }
-        public int Update(T entity)
+        public void Update(T entity)
         {
             _context.Set<T>().Update(entity);
             //_context.Update(entity); //EF Core 3.1 New Feature
-            return _context.SaveChanges();
         }
-        public int Delete(T entity)
+        public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
             //_context.Remove(entity); //EF Core 3.1 New Feature
-            return _context.SaveChanges();
         }
 
         public IEnumerable<T> GetAll()

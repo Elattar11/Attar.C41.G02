@@ -11,19 +11,24 @@ namespace Attar.C41.G02.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _departmentRepo;
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private readonly IDepartmentRepository _departmentRepo;
         private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentRepository departmentRepo , IWebHostEnvironment env, IMapper mapper)
+        public DepartmentController(
+            IUnitOfWork unitOfWork,
+            /*IDepartmentRepository departmentRepo ,*/ IWebHostEnvironment env, IMapper mapper)
         {
-            _departmentRepo = departmentRepo;
+            _unitOfWork = unitOfWork;
+            //_departmentRepo = departmentRepo;
             _env = env;
             _mapper = mapper;
         }
         public IActionResult Index()
         {
-            var departments = _departmentRepo.GetAll();
+            var departments = _unitOfWork.departmentRepository.GetAll();
 
             return View(departments);
         }
@@ -43,7 +48,10 @@ namespace Attar.C41.G02.PL.Controllers
             {
                 var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
 
-                var count = _departmentRepo.Add(mappedDep);
+                _unitOfWork.departmentRepository.Add(mappedDep);
+
+                var count = _unitOfWork.Complete();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -63,7 +71,7 @@ namespace Attar.C41.G02.PL.Controllers
                 return BadRequest(); //400
             }
 
-            var department = _departmentRepo.Get(id.Value);
+            var department = _unitOfWork.departmentRepository.Get(id.Value);
 
             var mappedDep = _mapper.Map<Department, DepartmentViewModel>(department);
 
@@ -111,7 +119,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-                _departmentRepo.Update(mappedDep);
+                _unitOfWork.departmentRepository.Update(mappedDep);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -150,7 +158,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-                _departmentRepo.Delete(mappedDep);
+                _unitOfWork.departmentRepository.Delete(mappedDep);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)

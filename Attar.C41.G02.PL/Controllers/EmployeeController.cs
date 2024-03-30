@@ -13,17 +13,21 @@ namespace Attar.C41.G02.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepo;
+        //private readonly IEmployeeRepository _employeeRepo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
 
         //private readonly IDepartmentRepository _departmentRepository;
 
-        public EmployeeController(IEmployeeRepository employeeRepo, IWebHostEnvironment env 
+        public EmployeeController(
+            IUnitOfWork unitOfWork,
+            /*IEmployeeRepository employeeRepo,*/ IWebHostEnvironment env 
             , IMapper mapper
             /*, IDepartmentRepository departmentRepository*/)
         {
-            _employeeRepo = employeeRepo;
+            //_employeeRepo = employeeRepo;
+            _unitOfWork = unitOfWork;
             _env = env;
             _mapper = mapper;
             //_departmentRepository = departmentRepository;
@@ -40,9 +44,9 @@ namespace Attar.C41.G02.PL.Controllers
             var mappedEmp = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
 
             if (string.IsNullOrEmpty(searchInp))
-                employees = _employeeRepo.GetAll();
+                employees = _unitOfWork.employeeRepository.GetAll();
             else
-                employees = _employeeRepo.searchByName(searchInp.ToLower());
+                employees = _unitOfWork.employeeRepository.searchByName(searchInp.ToLower());
             return View(mappedEmp); 
 
         }
@@ -62,9 +66,9 @@ namespace Attar.C41.G02.PL.Controllers
             {
                 var mappedEmp = _mapper.Map<EmployeeViewModel , Employee>(employeeVM);
 
-                var count = _employeeRepo.Add(mappedEmp);
+                _unitOfWork.employeeRepository.Add(mappedEmp);
 
-
+                var count =  _unitOfWork.Complete();
                 if (count > 0)
                 {
                     TempData["Message"] = "Department is created successfully"; 
@@ -89,7 +93,7 @@ namespace Attar.C41.G02.PL.Controllers
                 return BadRequest(); //400
             }
 
-            var employee = _employeeRepo.Get(id.Value);
+            var employee = _unitOfWork.employeeRepository.Get(id.Value);
 
             var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
 
@@ -138,7 +142,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _employeeRepo.Update(mappedEmp);
+                _unitOfWork.employeeRepository.Update(mappedEmp);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -177,7 +181,7 @@ namespace Attar.C41.G02.PL.Controllers
             try
             {
                 var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _employeeRepo.Delete(mappedEmp);
+                _unitOfWork.employeeRepository.Delete(mappedEmp);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
