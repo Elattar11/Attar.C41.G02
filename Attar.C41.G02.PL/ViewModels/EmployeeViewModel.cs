@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Attar.C41.G02.PL.ViewModels
 {
@@ -45,6 +46,11 @@ namespace Attar.C41.G02.PL.ViewModels
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
         public Department Department { get; set; }
+
+        public IFormFile Image { get; set; }
+
+        public string ImageName { get; set; }
+
 
     }
 }

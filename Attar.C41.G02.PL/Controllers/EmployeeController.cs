@@ -1,6 +1,7 @@
 ﻿using Attar.C41.G02.BLL.Interfaces;
 using Attar.C41.G02.BLL.Repositories;
 using Attar.C41.G02.DAL.Models;
+using Attar.C41.G02.PL.Helpers;
 using Attar.C41.G02.PL.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
@@ -65,6 +66,8 @@ namespace Attar.C41.G02.PL.Controllers
         {
             if (ModelState.IsValid) //Server Side Validation
             {
+                employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "images");
+
                 var mappedEmp = _mapper.Map<EmployeeViewModel , Employee>(employeeVM);
 
                 _unitOfWork.Repository<Employee>().Add(mappedEmp);
@@ -72,7 +75,8 @@ namespace Attar.C41.G02.PL.Controllers
                 var count =  _unitOfWork.Complete();
                 if (count > 0)
                 {
-                    TempData["Message"] = "Department is created successfully"; 
+                    TempData["Message"] = "Department is created successfully";
+                    
                 }
                 else
                 {

@@ -24,7 +24,7 @@ namespace Attar.C41.G02.DAL.Models
     }
     public class Employee : ModelBase
     {
-        
+        public string ImageName { get; set; }
         public string Name { get; set; }
 
         public int? Age { get; set; }
