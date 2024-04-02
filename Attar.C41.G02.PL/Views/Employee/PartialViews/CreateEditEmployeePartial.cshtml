@@ -2,7 +2,7 @@
 
 @model EmployeeViewModel
 @{
-    var departments = new SelectList(_unitOdWork.Repository<Department>().GetAll(), nameof(Department.Id), nameof(Department.Name));
+    var departments = new SelectList(await _unitOdWork.Repository<Department>().GetAllAsync(), nameof(Department.Id), nameof(Department.Name));
 }
 
 <div class="form-group">

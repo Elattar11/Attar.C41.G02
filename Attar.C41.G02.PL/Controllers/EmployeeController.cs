@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Attar.C41.G02.PL.Controllers
 {
@@ -34,7 +35,7 @@ namespace Attar.C41.G02.PL.Controllers
             _mapper = mapper;
             //_departmentRepository = departmentRepository;
         }
-        public IActionResult Index(string searchInp)
+        public async Task<IActionResult> Index(string searchInp)
         {
             //ViewData["Message"] = "Hello ViewData";
 
@@ -46,7 +47,7 @@ namespace Attar.C41.G02.PL.Controllers
             var mappedEmp = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
 
             if (string.IsNullOrEmpty(searchInp))
-                employees = empRepo.GetAll();
+                employees = await empRepo.GetAllAsync();
             else
                 employees = empRepo.searchByName(searchInp.ToLower());
             return View(mappedEmp); 
@@ -62,17 +63,17 @@ namespace Attar.C41.G02.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(EmployeeViewModel employeeVM)
+        public async Task<IActionResult> Create(EmployeeViewModel employeeVM)
         {
             if (ModelState.IsValid) //Server Side Validation
             {
-                employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "images");
+                employeeVM.ImageName = await DocumentSettings.UploadFile(employeeVM.Image, "images");
 
                 var mappedEmp = _mapper.Map<EmployeeViewModel , Employee>(employeeVM);
 
                 _unitOfWork.Repository<Employee>().Add(mappedEmp);
 
-                var count =  _unitOfWork.Complete();
+                var count = await _unitOfWork.Complete();
                 if (count > 0)
                 {
                     TempData["Message"] = "Department is created successfully";
@@ -91,14 +92,14 @@ namespace Attar.C41.G02.PL.Controllers
 
 
         [HttpGet]
-        public IActionResult Details(int? id, string viewName = "Details")
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
             if (!id.HasValue)
             {
                 return BadRequest(); //400
             }
 
-            var employee = _unitOfWork.Repository<Employee>().Get(id.Value);
+            var employee = await _unitOfWork.Repository<Employee>().GetAsync(id.Value);
 
             var mappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
 
@@ -117,10 +118,10 @@ namespace Attar.C41.G02.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             //ViewData["Departments"] = _departmentRepository.GetAll();
-            return Details(id, "Edit");
+            return await Details(id, "Edit");
 
             ///if (!id.HasValue)
             ///{
@@ -139,7 +140,7 @@ namespace Attar.C41.G02.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, EmployeeViewModel employeeVM)
+        public async Task<IActionResult> Edit([FromRoute] int id, EmployeeViewModel employeeVM)
         {
             if (id != employeeVM.Id)
             {
@@ -152,7 +153,8 @@ namespace Attar.C41.G02.PL.Controllers
             {
                 var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
                 _unitOfWork.Repository<Employee>().Update(mappedEmp);
-                return RedirectToAction(nameof(Index));
+                 await _unitOfWork.Complete();
+                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
             {
@@ -178,22 +180,22 @@ namespace Attar.C41.G02.PL.Controllers
 
 
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
 
 
         [HttpPost]
-        public IActionResult Delete(EmployeeViewModel employeeVM)
+        public async Task<IActionResult> Delete(EmployeeViewModel employeeVM)
         {
             try
             {
                 employeeVM.ImageName = TempData["ImageName"] as string;
                 var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
                  _unitOfWork.Repository<Employee>().Delete(mappedEmp);
-                var count = _unitOfWork.Complete();
+                var count = await _unitOfWork.Complete();
                 if (count > 0 )
                 {
                     DocumentSettings.DeleteFile(employeeVM.ImageName , "images");

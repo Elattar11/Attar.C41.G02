@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace Attar.C41.G02.PL.Controllers
 {
@@ -28,7 +29,7 @@ namespace Attar.C41.G02.PL.Controllers
         }
         public IActionResult Index()
         {
-            var departments = _unitOfWork.Repository<Department>().GetAll();
+            var departments = _unitOfWork.Repository<Department>().GetAllAsync();
 
             return View(departments);
         }
@@ -41,7 +42,7 @@ namespace Attar.C41.G02.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(DepartmentViewModel departmentVM)
+        public async Task<IActionResult> Create(DepartmentViewModel departmentVM)
         {
 
             if (ModelState.IsValid) //Server Side Validation
@@ -50,7 +51,7 @@ namespace Attar.C41.G02.PL.Controllers
 
                 _unitOfWork.Repository<Department>().Add(mappedDep);
 
-                var count = _unitOfWork.Complete();
+                var count = await _unitOfWork.Complete();
 
                 if (count > 0)
                 {
@@ -64,14 +65,14 @@ namespace Attar.C41.G02.PL.Controllers
 
 
         [HttpGet]
-        public IActionResult Details(int? id , string viewName = "Details") 
+        public async Task<IActionResult> Details(int? id , string viewName = "Details") 
         {
             if (!id.HasValue)
             {
                 return BadRequest(); //400
             }
 
-            var department = _unitOfWork.Repository<Department>().Get(id.Value);
+            var department = await _unitOfWork.Repository<Department>().GetAsync(id.Value);
 
             var mappedDep = _mapper.Map<Department, DepartmentViewModel>(department);
 
@@ -86,9 +87,9 @@ namespace Attar.C41.G02.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            return Details(id , "Edit");
+            return await Details(id , "Edit");
 
             ///if (!id.HasValue)
             ///{
@@ -107,7 +108,7 @@ namespace Attar.C41.G02.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute]int id, DepartmentViewModel departmentVM)
+        public async Task<IActionResult> Edit([FromRoute]int id, DepartmentViewModel departmentVM)
         {
             if (id != departmentVM.Id)
             {
@@ -120,6 +121,7 @@ namespace Attar.C41.G02.PL.Controllers
             {
                 var mappedDep = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
                 _unitOfWork.Repository<Department>().Update(mappedDep);
+                await _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -146,9 +148,9 @@ namespace Attar.C41.G02.PL.Controllers
 
 
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
 
 

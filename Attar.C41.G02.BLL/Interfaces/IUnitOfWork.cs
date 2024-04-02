@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Attar.C41.G02.BLL.Interfaces
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork : IAsyncDisposable
     {
         //public IEmployeeRepository employeeRepository { get; set; }
         //public IDepartmentRepository departmentRepository { get; set; }
 
         IGenericRepository<T> Repository<T>() where T : ModelBase ;
 
-        int Complete();
+        Task<int> Complete();
     }
 }

@@ -37,22 +37,22 @@ namespace Attar.C41.G02.BLL.Repositories
             //_context.Remove(entity); //EF Core 3.1 New Feature
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             if (typeof(T) == typeof(Employee))
             {
-                return (IEnumerable<T>)_context.Employees.Include(E => E.Department).AsNoTracking().ToList();
+                return (IEnumerable<T>)await _context.Employees.Include(E => E.Department).AsNoTracking().ToListAsync();
             }
             else
             {
-                return _context.Set<T>().Include(E => E).AsNoTracking().ToList();
+                return await _context.Set<T>().Include(E => E).AsNoTracking().ToListAsync();
             }
         }
-        public T Get(int id)
+        public async Task<T> GetAsync(int id)
         {
             //return _context.Employees.Find(id);
 
-            return _context.Find<T>(id);
+            return await _context.FindAsync<T>(id);
 
             /// var department = _context.Employees.Local.Where(D => D.Id == id).FirstOrDefault();
             /// if (department is null)

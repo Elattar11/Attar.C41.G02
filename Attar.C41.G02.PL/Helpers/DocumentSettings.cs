@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Attar.C41.G02.PL.Helpers
 {
     public static class DocumentSettings
     {
-        public static string UploadFile(IFormFile file, string folderName)
+        public static async Task<string> UploadFile(IFormFile file, string folderName)
         {
             //1.Get Located Folder Path
             //string folderPath = $"C:\\Users\\MOHAMED\\OneDrive\\Music\\Desktop\\Attar.C41.G02\\Attar.C41.G02.PL\\wwwroot\\files\\images\\{folderName}";
@@ -30,7 +31,7 @@ namespace Attar.C41.G02.PL.Helpers
 
             var fileStram = new FileStream(filePath, FileMode.Create);
 
-            file.CopyTo(fileStram);
+            await file.CopyToAsync(fileStram);
 
             return fileName;
 
