@@ -50,6 +50,7 @@
     <table class="mt-5 table table-striped table-hover">
         <thead >
             <tr>
+                <th>Image</th>
                 <th>@Html.DisplayNameFor(D => D.Name)</th>
                 <th>@Html.DisplayNameFor(D => D.Age)</th>
                 <th>@Html.DisplayNameFor(D => D.Address)</th>
@@ -74,7 +75,9 @@
             @foreach(var employee in Model)
             {
                 <tr>
-
+                    <td>
+                        <img src="~/files/images/@employee.ImageName" width="75" class="img-fluid rounded-circle" alt="Employee Image" />
+                    </td>
                     <td>@employee.Name</td>
                     <td>@employee.Age</td>
                     <td>@employee.Address</td>
